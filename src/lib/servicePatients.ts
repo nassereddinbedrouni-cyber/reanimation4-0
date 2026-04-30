@@ -27,7 +27,7 @@ function generateVitalHistory(
       spo2: Math.max(70, Math.min(100, baseSpo2 + rand(-2, 2))),
       respiratoryRate: Math.max(4, Math.min(40, baseRR + rand(-3, 3))),
       temperature: Math.max(34, Math.min(42, baseTemp + rand(-3, 3, 1))),
-      glycemia: Math.max(2.0, Math.min(30.0, parseFloat((baseGlycemia + rand(-10, 10, 1) / 10).toFixed(1)))),
+      glycemia: Math.max(0.6, Math.min(5.0, parseFloat((baseGlycemia + rand(-30, 30, 1) / 100).toFixed(2)))),
       consciousness,
       timestamp: now - i * 5 * 60 * 1000,
     });
@@ -57,7 +57,7 @@ function generateNeoVitalHistory(
       spo2: Math.max(85, Math.min(100, baseSpo2 + rand(-2, 2))),
       respiratoryRate: Math.max(30, Math.min(70, baseRR + rand(-5, 5))),
       temperature: Math.max(36.0, Math.min(38.0, baseTemp + rand(-2, 2, 1))),
-      glycemia: Math.max(2.5, Math.min(8.0, rand(3.0, 6.0, 1))),
+      glycemia: Math.max(0.6, Math.min(2.5, parseFloat((rand(50, 150, 0) / 18 / 5).toFixed(2)))),
       consciousness: 'Alert',
       weight: weight,
       isPreemie: isPreemie,
@@ -125,6 +125,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p2',
@@ -154,6 +156,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p3',
@@ -183,6 +187,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p4',
@@ -212,6 +218,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p5',
@@ -240,6 +248,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p6',
@@ -268,6 +278,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p7',
@@ -296,6 +308,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p8',
@@ -325,6 +339,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p9',
@@ -354,6 +370,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'p10',
@@ -383,6 +401,8 @@ function createReanimationPatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'reanimation',
+      status: 'admitted',
+      patientNumber: 0,
     },
   ];
 
@@ -427,6 +447,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'd2',
@@ -455,6 +477,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'd3',
@@ -484,6 +508,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'd4',
@@ -513,6 +539,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'd5',
@@ -542,6 +570,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'd6',
@@ -571,6 +601,8 @@ function createDechocagePatients(): Patient[] {
       aiInsights: [],
       newsScore: emptyNews,
       service: 'dechocage',
+      status: 'admitted',
+      patientNumber: 0,
     },
   ];
 
@@ -613,6 +645,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo2',
@@ -642,6 +676,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo3',
@@ -671,6 +707,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo4',
@@ -700,6 +738,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo5',
@@ -729,6 +769,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     // Boxes 6-10: Grands prématurés
     {
@@ -760,6 +802,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo7',
@@ -790,6 +834,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo8',
@@ -820,6 +866,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo9',
@@ -850,6 +898,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
     {
       id: 'neo10',
@@ -880,6 +930,8 @@ function createNeonatologiePatients(): Patient[] {
       newsScore: emptyNews,
       service: 'neonatologie',
       isNeonatal: true,
+      status: 'admitted',
+      patientNumber: 0,
     },
   ];
 

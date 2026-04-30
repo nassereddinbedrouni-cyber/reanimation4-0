@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Patient, ViewType, ServiceType } from './types';
-import { updatePatientVitals } from './lib/simulatedData';
-import { createPatientsByService } from './lib/servicePatients';
+import { updatePatientVitals, createPatientsByService } from './lib/simulatedData';
 import Login from './components/Login';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -19,9 +18,15 @@ export default function App() {
 
   useEffect(() => {
     if (loggedIn) {
-      setPatients(createPatientsByService(service));
+      const newPatients = createPatientsByService(service);
+      setPatients(newPatients);
     }
   }, [loggedIn, service]);
+
+  const handlePatientAdded = useCallback(() => {
+    const updatedPatients = createPatientsByService(service);
+    setPatients(updatedPatients);
+  }, [service]);
 
   useEffect(() => {
     if (!loggedIn || patients.length === 0) return;
@@ -77,6 +82,8 @@ export default function App() {
       patients={patients}
       selectedPatient={selectedPatient}
       serviceName={serviceNames[service]}
+      service={service}
+      onPatientAdded={handlePatientAdded}
     >
       {renderContent()}
     </Layout>

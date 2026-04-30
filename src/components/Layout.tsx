@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
-import { ViewType, Patient } from '../types';
+import { ReactNode, useState } from 'react';
+import { ViewType, Patient, ServiceType } from '../types';
 import { Activity, Bell, LayoutDashboard, Users, Cpu, LogOut, Zap } from 'lucide-react';
+import PatientManagement from './PatientManagement';
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface LayoutProps {
   patients: Patient[];
   selectedPatient: Patient | null;
   serviceName?: string;
+  service?: ServiceType;
+  onPatientAdded?: () => void;
 }
 
 const navItems = [
@@ -19,7 +22,7 @@ const navItems = [
   { id: 'ai' as ViewType, label: 'Vue IA globale', icon: Cpu },
 ];
 
-export default function Layout({ children, currentView, onNavigate, onLogout, patients, selectedPatient, serviceName = 'Réanimation 4.0' }: LayoutProps) {
+export default function Layout({ children, currentView, onNavigate, onLogout, patients, selectedPatient, serviceName = 'Réanimation 4.0', service = 'reanimation', onPatientAdded }: LayoutProps) {
   const criticalCount = patients.filter((p) => p.newsScore.risk === 'critical').length;
   const alertCount = patients.reduce(
     (acc, p) => acc + (p.newsScore.risk === 'critical' ? 1 : 0) + p.aiInsights.filter((i) => i.type === 'critical').length,
@@ -126,6 +129,9 @@ export default function Layout({ children, currentView, onNavigate, onLogout, pa
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {!selectedPatient && service === 'neonatologie' && onPatientAdded && (
+              <PatientManagement service={service} onPatientAdded={onPatientAdded} />
+            )}
             <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Temps réel

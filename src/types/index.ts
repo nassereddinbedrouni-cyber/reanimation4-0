@@ -8,7 +8,7 @@ export interface VitalSigns {
   spo2: number;
   respiratoryRate: number;
   temperature: number;
-  glycemia: number;
+  glycemia: number; // g/l
   consciousness: ConsciousnessLevel;
   timestamp: number;
 }
@@ -73,8 +73,10 @@ export interface BiologicalResult {
 
 export interface Patient {
   id: string;
+  patientNumber: number; // ID du patient unique
   name: string;
   age: number;
+  ageInDays?: number; // Pour néonatologie
   gender: 'M' | 'F';
   bed: string;
   diagnosis: string;
@@ -88,8 +90,13 @@ export interface Patient {
   biologicalResults: BiologicalResult[];
   aiInsights: AIInsight[];
   newsScore: NEWSScore;
-  service?: ServiceType;
+  service: ServiceType;
   isNeonatal?: boolean;
+  boxNumber?: number; // Pour néonatologie (1-10)
+  maternalName?: string; // Nom de la mère
+  maternalFirstName?: string; // Prénom de la mère
+  apgarScore?: number; // Pour néonatologie (0-10)
+  status: 'admitted' | 'discharged';
 }
 
 export type ViewType = 'dashboard' | 'patient' | 'alerts' | 'devices' | 'ai';

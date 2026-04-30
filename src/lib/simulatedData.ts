@@ -27,7 +27,7 @@ function generateVitalHistory(
       spo2: Math.max(70, Math.min(100, baseSpo2 + rand(-2, 2))),
       respiratoryRate: Math.max(4, Math.min(40, baseRR + rand(-3, 3))),
       temperature: Math.max(34, Math.min(42, baseTemp + rand(-3, 3, 1))),
-      glycemia: Math.max(2.0, Math.min(30.0, parseFloat((baseGlycemia + rand(-10, 10, 1) / 10).toFixed(1)))),
+      glycemia: Math.max(0.6, Math.min(5.0, parseFloat((baseGlycemia + rand(-30, 30, 1) / 100).toFixed(2)))),
       consciousness,
       timestamp: now - i * 5 * 60 * 1000,
     });
@@ -47,12 +47,116 @@ function makeDevices(types: Array<{ type: MedicalDevice['type']; name: string; d
   }));
 }
 
+function generateNeonatalPatients(): Patient[] {
+  const newborns: Patient[] = [];
+  const now = new Date();
+  let patientNum = 1;
+
+  for (let box = 1; box <= 10; box++) {
+    const isPreemie = box > 5;
+    const deviceType = isPreemie ? 'couveuse' : 'table chauffante';
+
+    for (let i = 0; i < 3; i++) {
+      const ageInDays = rand(0, 28);
+      const dateOfBirth = new Date(now.getTime() - ageInDays * 24 * 60 * 60 * 1000);
+      const mother = generateMotherName();
+      const gender = Math.random() > 0.5 ? 'M' : 'F';
+      const name = `${gender === 'M' ? 'Fils' : 'Fille'} de ${mother.firstName} ${mother.lastName}`;
+
+      newborns.push({
+        id: `neo-${box}-${i + 1}`,
+        patientNumber: 1000 + patientNum++,
+        name,
+        age: 0,
+        ageInDays,
+        gender,
+        bed: `Box ${box}`,
+        diagnosis: isPreemie ? 'Prématuré - Surveillance' : 'Nouveau-né à terme - Surveillance',
+        comorbidities: [],
+        admissionDate: dateOfBirth.toLocaleDateString('fr-FR'),
+        physician: 'Dr.',
+        treatments: [],
+        allergies: [],
+        vitals: generateNeonatalVitalHistory(ageInDays),
+        devices: makeDevices([
+          { type: 'monitor', name: isPreemie ? 'Couveuse' : 'Table chauffante', days: 0, status: 'normal' },
+          { type: 'monitor', name: 'Monitoring cardiaque', days: 0, status: 'normal' },
+        ]),
+        biologicalResults: makeBio([
+          { name: 'Glycémie', value: (rand(50, 100, 0) / 18).toFixed(2), unit: 'g/l', status: 'normal' },
+        ]),
+        aiInsights: [],
+        newsScore: emptyNews,
+        service: 'neonatologie',
+        isNeonatal: true,
+        boxNumber: box,
+        maternalName: mother.lastName,
+        maternalFirstName: mother.firstName,
+        apgarScore: rand(7, 10),
+        status: 'admitted',
+      });
+    }
+  }
+
+  return newborns.map((p) => {
+    const latestVitals = p.vitals[p.vitals.length - 1];
+    const newsScore = calculateNEWS(latestVitals);
+    return { ...p, newsScore };
+  });
+}
+
+function generateMotherName() {
+  const firstNames = ['Fatima', 'Amina', 'Zahra', 'Leila', 'Noor', 'Hana', 'Salma', 'Rania', 'Dina', 'Jana'];
+  const lastNames = ['Bennani', 'Riad', 'Fassi', 'Osman', 'Khachani', 'Alami', 'Qadri', 'Mansouri', 'Tazi', 'Boukhari'];
+  return {
+    firstName: firstNames[rand(0, firstNames.length - 1)],
+    lastName: lastNames[rand(0, lastNames.length - 1)],
+  };
+}
+
+function generateNeonatalVitalHistory(ageInDays: number, count = 20): VitalSigns[] {
+  const vitals: VitalSigns[] = [];
+  const now = Date.now();
+
+  const baseHR = 120 + rand(-10, 10);
+  const baseSBP = 65 + rand(-5, 5);
+  const baseSpo2 = 95 + rand(-2, 2);
+  const baseRR = 40 + rand(-5, 5);
+  const baseTemp = 37 + rand(-1, 1, 1);
+  const baseGlycemia = (80 + rand(-20, 20)) / 18;
+
+  for (let i = count - 1; i >= 0; i--) {
+    vitals.push({
+      heartRate: Math.max(100, Math.min(160, baseHR + rand(-8, 8))),
+      systolicBP: Math.max(50, Math.min(80, baseSBP + rand(-5, 5))),
+      diastolicBP: Math.max(30, Math.min(50, Math.round(baseSBP * 0.6) + rand(-3, 3))),
+      spo2: Math.max(88, Math.min(100, baseSpo2 + rand(-2, 2))),
+      respiratoryRate: Math.max(30, Math.min(60, baseRR + rand(-5, 5))),
+      temperature: Math.max(36, Math.min(38.5, baseTemp + rand(-1, 1, 1))),
+      glycemia: Math.max(0.6, Math.min(2.5, parseFloat((baseGlycemia + rand(-30, 30, 1) / 100).toFixed(2)))),
+      consciousness: 'Alert',
+      timestamp: now - i * 5 * 60 * 1000,
+    });
+  }
+  return vitals;
+}
+
 function makeBio(results: Array<{ name: string; value: string; unit: string; status: BiologicalResult['status'] }>): BiologicalResult[] {
   const today = new Date().toLocaleDateString('fr-FR');
   return results.map((r) => ({ ...r, date: today }));
 }
 
 const emptyNews = { total: 0, respiratoryRate: 0, spo2: 0, temperature: 0, systolicBP: 0, heartRate: 0, consciousness: 0, risk: 'low' as const, interpretation: '' };
+
+export function createPatientsByService(service: 'reanimation' | 'soinsIntensifs' | 'dechocage' | 'neonatologie'): Patient[] {
+  if (service === 'neonatologie') {
+    return generateNeonatalPatients();
+  }
+  if (service === 'dechocage') {
+    return createInitialPatients().slice(0, 10);
+  }
+  return createInitialPatients();
+}
 
 export function createInitialPatients(): Patient[] {
   const patients: Patient[] = [
@@ -334,11 +438,11 @@ export function createInitialPatients(): Patient[] {
     },
   ];
 
-  return patients.map((p) => {
+  return patients.map((p, index) => {
     const latestVitals = p.vitals[p.vitals.length - 1];
     const newsScore = calculateNEWS(latestVitals);
     const aiInsights = generateAIInsights({ ...p, newsScore }, newsScore);
-    return { ...p, newsScore, aiInsights };
+    return { ...p, newsScore, aiInsights, patientNumber: index + 1, status: 'admitted' as const };
   });
 }
 
@@ -354,7 +458,7 @@ export function updatePatientVitals(patient: Patient): Patient {
     spo2: Math.round(drift(last.spo2, 2, 70, 100)),
     respiratoryRate: Math.round(drift(last.respiratoryRate, 3, 4, 40)),
     temperature: parseFloat(drift(last.temperature, 0.2, 34, 42).toFixed(1)),
-    glycemia: parseFloat(drift(last.glycemia, 0.6, 2.0, 30.0).toFixed(1)),
+    glycemia: parseFloat(drift(last.glycemia, 0.1, 0.6, 5.0).toFixed(2)),
     consciousness: last.consciousness,
     timestamp: Date.now(),
   };
