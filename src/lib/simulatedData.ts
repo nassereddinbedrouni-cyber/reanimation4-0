@@ -238,7 +238,7 @@ export function createInitialPatients(): Patient[] {
         { name: 'Hémoglobine', value: '9.1', unit: 'g/dL', status: 'abnormal' },
         { name: 'INR', value: '1.8', unit: '', status: 'abnormal' },
         { name: 'Natrémie', value: '158', unit: 'mmol/L', status: 'critical' },
-        { name: 'Glycémie', value: '7.2', unit: 'mmol/L', status: 'normal' },
+        { name: 'Glycémie', value: '1.30', unit: 'g/l', status: 'normal' },
       ]),
       aiInsights: [],
       newsScore: emptyNews,
@@ -372,7 +372,7 @@ export function createInitialPatients(): Patient[] {
         { type: 'catheter', name: 'Sonde urinaire', days: 0, status: 'normal' },
       ]),
       biologicalResults: makeBio([
-        { name: 'Glycémie', value: '28.4', unit: 'mmol/L', status: 'critical' },
+        { name: 'Glycémie', value: '5.12', unit: 'g/l', status: 'critical' },
         { name: 'Corps cétoniques', value: '6.8', unit: 'mmol/L', status: 'critical' },
         { name: 'pH', value: '7.18', unit: '', status: 'critical' },
         { name: 'Potassium', value: '3.2', unit: 'mmol/L', status: 'abnormal' },

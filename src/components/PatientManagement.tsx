@@ -32,12 +32,24 @@ export default function PatientManagement({ service, onPatientAdded }: PatientMa
     setError('');
 
     try {
+      if (!formData.patientNumber || !formData.name || !formData.dateOfBirth) {
+        setError('Veuillez remplir tous les champs obligatoires');
+        setLoading(false);
+        return;
+      }
+
       const dateOfBirth = new Date(formData.dateOfBirth);
       const now = new Date();
       const ageInDays = Math.floor((now.getTime() - dateOfBirth.getTime()) / (1000 * 60 * 60 * 24));
 
       if (isNeonatal && ageInDays > 28) {
         setError('En néonatologie, l\'âge ne doit pas dépasser 28 jours');
+        setLoading(false);
+        return;
+      }
+
+      if (isNeonatal && !formData.boxNumber) {
+        setError('Le numéro de box est obligatoire pour la néonatologie');
         setLoading(false);
         return;
       }
@@ -77,18 +89,23 @@ export default function PatientManagement({ service, onPatientAdded }: PatientMa
     }
   };
 
-  const handleRemovePatient = async (patientId: string) => {
+  const handleRemovePatient = async () => {
+    if (!patientIdToRemove) {
+      setError('Veuillez entrer l\'ID du patient');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
     try {
-      const success = await removePatient(patientId);
+      const success = await removePatient(patientIdToRemove);
       if (success) {
         setShowRemoveForm(false);
         setPatientIdToRemove('');
         onPatientAdded();
       } else {
-        setError('Erreur lors de la suppression du patient');
+        setError('Erreur lors de la suppression du patient. Vérifiez l\'ID.');
       }
     } catch (err) {
       setError('Erreur: ' + (err instanceof Error ? err.message : 'Unknown error'));
@@ -236,9 +253,10 @@ export default function PatientManagement({ service, onPatientAdded }: PatientMa
             {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
 
             <div className="space-y-4">
+              <p className="text-sm text-slate-600">Entrez l'UUID du patient pour confirmer la sortie:</p>
               <input
                 type="text"
-                placeholder="ID du patient"
+                placeholder="ex: neo-6-1 ou p1"
                 value={patientIdToRemove}
                 onChange={(e) => setPatientIdToRemove(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -252,7 +270,7 @@ export default function PatientManagement({ service, onPatientAdded }: PatientMa
                   Annuler
                 </button>
                 <button
-                  onClick={() => handleRemovePatient(patientIdToRemove)}
+                  onClick={handleRemovePatient}
                   disabled={loading || !patientIdToRemove}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400"
                 >

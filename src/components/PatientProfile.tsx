@@ -37,7 +37,7 @@ export default function PatientProfile({ patient, onBack }: PatientProfileProps)
     { metric: 'respiratoryRate' as const, label: 'Fréquence respiratoire', unit: '/min', color: 'text-teal-400', min: 4, max: 40 },
     { metric: 'temperature' as const, label: 'Température', unit: '°C', color: 'text-amber-400', min: 34, max: 42 },
     { metric: 'diastolicBP' as const, label: 'Pression diastolique', unit: 'mmHg', color: 'text-slate-300', min: 40, max: 130 },
-    { metric: 'glycemia' as const, label: 'Glycémie', unit: 'mmol/L', color: 'text-pink-400', min: 2, max: 30 },
+    { metric: 'glycemia' as const, label: 'Glycémie', unit: 'g/l', color: 'text-pink-400', min: 0.6, max: 5.0 },
   ];
 
   return (
@@ -101,8 +101,8 @@ export default function PatientProfile({ patient, onBack }: PatientProfileProps)
             icon: Droplets,
             label: 'Glycémie',
             value: `${vitals.glycemia}`,
-            unit: 'mmol/L',
-            color: vitals.glycemia < 3.0 || vitals.glycemia > 20 ? 'text-red-400' : vitals.glycemia < 4.0 || vitals.glycemia > 10 ? 'text-amber-400' : 'text-pink-400',
+            unit: 'g/l',
+            color: vitals.glycemia < 0.6 || vitals.glycemia > 3.6 ? 'text-red-400' : vitals.glycemia < 0.7 || vitals.glycemia > 1.8 ? 'text-amber-400' : 'text-pink-400',
           },
           { icon: Eye, label: 'AVPU', value: vitals.consciousness, unit: '', color: consciousnessColors[vitals.consciousness] },
         ].map((item) => (

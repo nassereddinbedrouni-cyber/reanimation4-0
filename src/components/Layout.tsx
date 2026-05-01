@@ -129,7 +129,7 @@ export default function Layout({ children, currentView, onNavigate, onLogout, pa
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {!selectedPatient && service === 'neonatologie' && onPatientAdded && (
+            {!selectedPatient && onPatientAdded && (
               <PatientManagement service={service} onPatientAdded={onPatientAdded} />
             )}
             <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">

@@ -92,10 +92,10 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
           </div>
         </div>
         <div className="flex items-center gap-1.5">
-          <Droplets className={`w-3.5 h-3.5 shrink-0 ${vitals.glycemia < 3.0 || vitals.glycemia > 20 ? 'text-red-400' : vitals.glycemia < 4.0 || vitals.glycemia > 10 ? 'text-amber-400' : 'text-violet-400'}`} />
+          <Droplets className={`w-3.5 h-3.5 shrink-0 ${vitals.glycemia < 0.6 || vitals.glycemia > 3.6 ? 'text-red-400' : vitals.glycemia < 0.7 || vitals.glycemia > 1.8 ? 'text-amber-400' : 'text-violet-400'}`} />
           <div>
-            <div className={`text-xs font-semibold ${vitals.glycemia < 3.0 || vitals.glycemia > 20 ? 'text-red-400' : vitals.glycemia < 4.0 || vitals.glycemia > 10 ? 'text-amber-400' : 'text-white'}`}>{vitals.glycemia}</div>
-            <div className="text-xs text-slate-500">mmol/L</div>
+            <div className={`text-xs font-semibold ${vitals.glycemia < 0.6 || vitals.glycemia > 3.6 ? 'text-red-400' : vitals.glycemia < 0.7 || vitals.glycemia > 1.8 ? 'text-amber-400' : 'text-white'}`}>{vitals.glycemia}</div>
+            <div className="text-xs text-slate-500">g/l</div>
           </div>
         </div>
       </div>
