@@ -41,7 +41,7 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
             )}
           </div>
           <h3 className="text-white font-semibold mt-0.5 group-hover:text-cyan-300 transition-colors">{patient.name}</h3>
-          <p className="text-xs text-slate-500">{patient.isNeonatal && patient.ageInDays ? `${patient.ageInDays} j` : `${patient.age} ans`} · {patient.gender === 'M' ? 'Homme' : 'Femme'}</p>
+          <p className="text-xs text-slate-500">{patient.age} ans · {patient.gender === 'M' ? 'Homme' : 'Femme'}</p>
         </div>
         <NEWSBadge score={patient.newsScore} compact />
       </div>

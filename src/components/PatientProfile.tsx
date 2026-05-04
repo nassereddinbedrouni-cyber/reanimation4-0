@@ -59,7 +59,7 @@ export default function PatientProfile({ patient, onBack }: PatientProfileProps)
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">{patient.name}</h2>
-                <p className="text-slate-400 text-sm">{patient.isNeonatal && patient.ageInDays ? `${patient.ageInDays} jours` : `${patient.age} ans`} · {patient.gender === 'M' ? 'Homme' : 'Femme'} · {patient.bed}</p>
+                <p className="text-slate-400 text-sm">{patient.age} ans · {patient.gender === 'M' ? 'Homme' : 'Femme'} · {patient.bed}</p>
               </div>
             </div>
             <NEWSBadge score={patient.newsScore} compact />
