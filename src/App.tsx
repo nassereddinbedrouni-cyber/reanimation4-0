@@ -1,122 +1,91 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect, useCallback } from 'react';
+import { Patient, ViewType, ServiceType } from './types';
+import { updatePatientVitals, createPatientsByService } from './lib/simulatedData';
+import Login from './components/Login';
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
+import PatientProfile from './components/PatientProfile';
+import AlertPanel from './components/AlertPanel';
+import GlobalAIView from './components/GlobalAIView';
+import DevicesView from './components/DevicesView';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [service, setService] = useState<ServiceType>('reanimation');
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [view, setView] = useState<ViewType>('dashboard');
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (loggedIn) {
+      const newPatients = createPatientsByService(service);
+      setPatients(newPatients);
+    }
+  }, [loggedIn, service]);
+
+  const handlePatientAdded = useCallback(() => {
+    const updatedPatients = createPatientsByService(service);
+    setPatients(updatedPatients);
+  }, [service]);
+
+  useEffect(() => {
+    if (!loggedIn || patients.length === 0) return;
+    const interval = setInterval(() => {
+      setPatients((prev) => prev.map((p) => updatePatientVitals(p)));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [loggedIn, patients.length]);
+
+  const handleSelectPatient = useCallback((id: string) => {
+    setSelectedPatientId(id);
+    setView('patient');
+  }, []);
+
+  const handleNavigate = useCallback((v: ViewType) => {
+    setView(v);
+    if (v !== 'patient') setSelectedPatientId(null);
+  }, []);
+
+  const selectedPatient = selectedPatientId ? patients.find((p) => p.id === selectedPatientId) ?? null : null;
+
+  if (!loggedIn) {
+    return <Login onLogin={(svc) => { setService(svc); setLoggedIn(true); }} />;
+  }
+
+  const renderContent = () => {
+    if (view === 'patient' && selectedPatient) {
+      return (
+        <PatientProfile
+          patient={selectedPatient}
+          onBack={() => { setView('dashboard'); setSelectedPatientId(null); }}
+        />
+      );
+    }
+    if (view === 'alerts') return <AlertPanel patients={patients} />;
+    if (view === 'ai') return <GlobalAIView patients={patients} onSelectPatient={handleSelectPatient} />;
+    if (view === 'devices') return <DevicesView patients={patients} onSelectPatient={handleSelectPatient} />;
+    return <Dashboard patients={patients} onSelectPatient={handleSelectPatient} />;
+  };
+
+  const serviceNames: Record<ServiceType, string> = {
+    reanimation: 'Réanimation',
+    soinsIntensifs: 'Soins Intensifs',
+    dechocage: 'Déchocage',
+    neonatologie: 'Néonatologie',
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <Layout
+      currentView={view}
+      onNavigate={handleNavigate}
+      onLogout={() => { setLoggedIn(false); setPatients([]); setView('dashboard'); }}
+      patients={patients}
+      selectedPatient={selectedPatient}
+      serviceName={serviceNames[service]}
+      service={service}
+      onPatientAdded={handlePatientAdded}
+    >
+      {renderContent()}
+    </Layout>
+  );
 }
-
-export default App
